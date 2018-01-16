@@ -11,4 +11,24 @@ app.get('/login',(req,res)=>{
     res.render('login');
 });
 
+//商品
+app.get('/product',(req,res)=>{
+    res.render('product');
+});
+
+//增加
+app.get('/productadd',(req,res)=>{
+    res.render('productadd');
+});
+
+//编辑
+app.get('/productedit',(req,res)=>{
+    res.render('productedit');
+});
+
+//删除
+app.get('/productdelete',(req,res)=>{
+    res.render('productdelete');
+});
+
 app.listen(7500);
