@@ -1,0 +1,15 @@
+1、pages
+		login
+		product
+		productAdd
+		productEdit
+2、routes
+		public
+		views
+			public
+3、login
+		mongoose
+			findOne()
+				success=>product
+4、
+		
