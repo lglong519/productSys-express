@@ -13,11 +13,7 @@ db.on('open', function (cb) {
 db.on('error', console.error.bind(console, 'connection error:'));
 // var mySchema = new mongoose.Schema({username:String,password:String});
 // var PersonModel = mongoose.model("user", mySchema);
-var model = mongoose.model('',{},'user');
-model.find((err,docs)=>{
-    console.log(1,err);
-    console.log(2,docs);
-})
+let model = mongoose.model('',{},'user');
 /*
 var personEntity = new PersonModel({
     username : "3feng",
@@ -46,8 +42,15 @@ app.get('/login',(req,res)=>{
 //登录
 app.post('/doLogin',(req,res)=>{
     console.log(req.body);
-    
-
+    model.findOne(req.body,(err,result)=>{
+        if(result){
+            console.log('查询成功');
+            res.redirect('/product');
+        }else{
+            console.log('查询失败',result);
+            res.send('<script>alert("登录失败");location.href="/login";</script>');
+        }
+    })
 });
 
 //商品
