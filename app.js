@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 //引入 express-session
 const session = require("express-session");
 //引入md5
-const md5=require('md5-node');
+const md5 = require('md5-node');
 const mongoose = require('mongoose');
 mongoose.connect("mongodb://localhost:27017/productmanage");
 const db = mongoose.connection;
@@ -18,15 +18,17 @@ db.on('error', console.error.bind(console, 'connection error:'));
 // var mySchema = new mongoose.Schema({username:String,password:String});
 
 // var PersonModel = mongoose.model("user", mySchema);
-let model = mongoose.model('', {    //Schema 内容可以不写，但是查询结果除了_id,其他属性无法单独获取
+
+//第一个user是为了区分不同的model
+let model = mongoose.model('user', {    //Schema 内容可以不写，但是查询结果除了_id,其他属性无法单独获取
     username: ''
 }, 'user');
-let Product=mongoose.model('',{
-    title:'',
-    price:number,
-    freight:number,
-    pic:''
-},'product');
+let Product = mongoose.model('product', {
+    title: '',
+    price: Number,
+    freight: Number,
+    pic: ''
+}, 'product');
 /*
 var personEntity = new PersonModel({
     username : "3feng",
@@ -34,9 +36,7 @@ var personEntity = new PersonModel({
 });
 */
 
-Product.find({},(err, result) => {
-    console.log('p',result);
-})
+
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -62,6 +62,7 @@ app.use(express.static('public'));
 //自定义中间件，判断登录状态
 app.use(function (req, res, next) {
     console.log(req.url);
+    app.locals['currUrl']=req.url;
     if (req.url === '/login' || req.url === '/doLogin') {
         console.log(11);
         next();
@@ -85,7 +86,7 @@ app.get('/login', (req, res) => {
 //登录
 app.post('/doLogin', (req, res) => {
     console.log(req.body);
-    req.body.password=md5(req.body.password);
+    req.body.password = md5(req.body.password);
     model.findOne(req.body, (err, result) => {
         if (result) {
             console.log('查询成功', result._id);
@@ -115,7 +116,14 @@ app.get('/loginOut', (req, res) => {
 
 //商品
 app.get('/product', (req, res) => {
-    res.render('product');
+    Product.find({}, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render('product',{list:result});
+        }
+        console.log('p', result);
+    })
 });
 
 //增加
