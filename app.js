@@ -5,6 +5,8 @@ const app = express();
 const bodyParser = require('body-parser');
 //引入 express-session
 const session = require("express-session");
+//引入md5
+const md5=require('md5-node');
 const mongoose = require('mongoose');
 mongoose.connect("mongodb://localhost:27017/productmanage");
 const db = mongoose.connection;
@@ -17,15 +19,25 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 // var PersonModel = mongoose.model("user", mySchema);
 let model = mongoose.model('', {    //Schema 内容可以不写，但是查询结果除了_id,其他属性无法单独获取
-    username: '',
-    password: ''
+    username: ''
 }, 'user');
+let Product=mongoose.model('',{
+    title:'',
+    price:number,
+    freight:number,
+    pic:''
+},'product');
 /*
 var personEntity = new PersonModel({
     username : "3feng",
     password  : 16
 });
 */
+
+Product.find({},(err, result) => {
+    console.log('p',result);
+})
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
@@ -60,7 +72,7 @@ app.use(function (req, res, next) {
             next();
         } else {
             console.log(33, req.session.userInfo);
-            res.render('login');
+            res.redirect('/login');
         }
     }
 });
@@ -73,6 +85,7 @@ app.get('/login', (req, res) => {
 //登录
 app.post('/doLogin', (req, res) => {
     console.log(req.body);
+    req.body.password=md5(req.body.password);
     model.findOne(req.body, (err, result) => {
         if (result) {
             console.log('查询成功', result._id);
